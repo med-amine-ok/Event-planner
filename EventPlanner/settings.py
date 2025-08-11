@@ -53,11 +53,6 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
 ]
 
-# Optional: enable Cloudinary storage when CLOUDINARY_URL is provided
-CLOUDINARY_URL = config('CLOUDINARY_URL', default=None)
-if CLOUDINARY_URL:
-    INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -142,10 +137,6 @@ STATICFILES_DIRS = [
 # Media files
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
-
-# Use Cloudinary for media storage if configured (Vercel-friendly)
-if CLOUDINARY_URL:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
