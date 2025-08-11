@@ -1,0 +1,8 @@
+Django>=5.2.5
+Pillow>=10.0.0
+django-crontab>=0.7.1
+django-crispy-forms>=2.0
+crispy-bootstrap5>=0.7
+python-decouple>=3.8
+dj-database-url>=2.2.0
+psycopg2-binary>=2.9

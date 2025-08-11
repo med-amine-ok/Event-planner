@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center min-vh-100 align-items-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="card shadow-custom text-center">
+                <div class="card-body p-5">
+                    <!-- Success Icon -->
+                    <div class="logout-icon mb-4">
+                        <i class="fas fa-check-circle fa-4x text-success"></i>
+                    </div>
+                    
+                    <h3 class="fw-bold text-dark mb-3">Successfully Logged Out</h3>
+                    <p class="text-muted mb-4">
+                        Thank you for using Event Planner! You have been safely logged out of your account.
+                    </p>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'login' %}" class="btn btn-orange btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In Again
+                        </a>
+                        <a href="{% url 'events-home' %}" class="btn btn-outline-orange">
+                            <i class="fas fa-home me-2"></i>Browse Events
+                        </a>
+                    </div>
+                    
+                    <!-- Divider -->
+                    <div class="divider my-4">
+                        <span class="divider-text">or</span>
+                    </div>
+                    
+                    <!-- Register Link -->
+                    <p class="text-muted mb-2">Don't have an account?</p>
+                    <a href="{% url 'register' %}" class="btn btn-link text-orange text-decoration-none">
+                        <i class="fas fa-user-plus me-1"></i>Create Account
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Recent Events Teaser -->
+            <div class="card mt-4">
+                <div class="card-body text-center">
+                    <h6 class="text-orange mb-3">
+                        <i class="fas fa-calendar-alt me-2"></i>What You're Missing
+                    </h6>
+                    <p class="text-muted mb-3">
+                        Join our community to create events, RSVP to gatherings, and never miss out on amazing experiences!
+                    </p>
+                    
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="feature-stat">
+                                <div class="stat-number">500+</div>
+                                <div class="stat-label">Events</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="feature-stat">
+                                <div class="stat-number">1.2K+</div>
+                                <div class="stat-label">Members</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="feature-stat">
+                                <div class="stat-number">4.8★</div>
+                                <div class="stat-label">Rating</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.logout-icon {
+    animation: zoomIn 0.6s ease-out;
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.divider {
+    position: relative;
+    text-align: center;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e9ecef;
+}
+
+.divider-text {
+    background: white;
+    padding: 0 1rem;
+    color: var(--gray-medium);
+    font-size: 0.9rem;
+}
+
+.feature-stat {
+    padding: 0.5rem;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--orange-primary);
+    font-family: 'Poppins', sans-serif;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--gray-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-link:hover {
+    transform: translateY(-2px);
+    transition: var(--transition);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 2rem !important;
+    }
+    
+    .logout-icon i {
+        font-size: 3rem !important;
+    }
+    
+    .stat-number {
+        font-size: 1.25rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add some interactive effects
+    const buttons = document.querySelectorAll('.btn');
+    
+    buttons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Auto-redirect after 30 seconds (optional)
+    let countdown = 30;
+    const autoRedirect = setInterval(function() {
+        countdown--;
+        if (countdown <= 0) {
+            clearInterval(autoRedirect);
+            window.location.href = "{% url 'events-home' %}";
+        }
+    }, 1000);
+    
+    // Clear auto-redirect if user interacts with the page
+    document.addEventListener('click', function() {
+        clearInterval(autoRedirect);
+    });
+});
+</script>
+{% endblock content %}

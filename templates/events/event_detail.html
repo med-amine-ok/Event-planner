@@ -1,0 +1,401 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Event Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="position-relative">
+                    {% if object.image %}
+                        <img src="{{ object.image.url }}" class="card-img-top" alt="{{ object.title }}" style="height: 300px; object-fit: cover;">
+                    {% else %}
+                        <div class="card-img-top bg-orange-light d-flex align-items-center justify-content-center" style="height: 300px;">
+                            <i class="fas fa-calendar-alt fa-5x text-orange"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="position-absolute top-0 end-0 p-3">
+                        {% if user == object.creator %}
+                            <div class="btn-group">
+                                {% if object.is_completed %}
+                                    <a href="{% url 'event-undo-complete' object.pk %}" class="btn btn-success btn-sm" 
+                                       onclick="return confirm('Are you sure you want to undo marking this event as completed?')">
+                                        <i class="fas fa-undo"></i> Undo Complete
+                                    </a>
+                                {% endif %}
+                                <a href="{% url 'event-update' object.pk %}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a href="{% url 'event-delete' object.pk %}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h1 class="card-title">{{ object.title }}</h1>
+                            
+                            <div class="event-meta mb-4">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="meta-item">
+                                            <i class="fas fa-calendar-alt text-orange"></i>
+                                            <strong>Date:</strong> {{ object.date|date:"l, F d, Y" }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="meta-item">
+                                            <i class="fas fa-clock text-orange"></i>
+                                            <strong>Time:</strong> {{ object.time|time:"g:i A" }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="meta-item">
+                                            <i class="fas fa-map-marker-alt text-orange"></i>
+                                            <strong>Location:</strong> {{ object.location }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="meta-item">
+                                            <i class="fas fa-user text-orange"></i>
+                                            <strong>Organizer:</strong> {{ object.creator.first_name|default:object.creator.username }}
+                                        </div>
+                                    </div>
+                                    {% if object.capacity %}
+                                        <div class="col-md-6">
+                                            <div class="meta-item">
+                                                <i class="fas fa-users text-orange"></i>
+                                                <strong>Capacity:</strong> {{ object.capacity }} people
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                            
+                            <!-- Countdown Timer -->
+                            {% if not object.is_past and time_until_event %}
+                                <div class="countdown-timer" data-event-date="{{ object.date }}T{{ object.time }}">
+                                    <div class="countdown-item">
+                                        <span class="countdown-number">{{ time_until_event.days }}</span>
+                                        <span class="countdown-label">Days</span>
+                                    </div>
+                                    <div class="countdown-item">
+                                        <span class="countdown-number">{{ time_until_event.hours }}</span>
+                                        <span class="countdown-label">Hours</span>
+                                    </div>
+                                    <div class="countdown-item">
+                                        <span class="countdown-number">{{ time_until_event.minutes }}</span>
+                                        <span class="countdown-label">Minutes</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <!-- RSVP Section -->
+                            {% if user.is_authenticated and not object.is_past %}
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">
+                                            {% if user_rsvp %}
+                                                Your attendance status
+                                            {% else %}
+                                                attend this Event
+                                            {% endif %}
+                                        </h5>
+                                        
+                                        {% if user_rsvp %}
+                                            <div class="alert alert-info">
+                                                You are 
+                                                <strong class="badge {% if user_rsvp.status == 'going' %}badge-going{% else %}badge-not-going{% endif %}">
+                                                    {{ user_rsvp.get_status_display }}
+                                                </strong>
+                                                to this event.
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <form method="post" action="{% url 'event-rsvp' object.pk %}" class="rsvp-form">
+                                            {% csrf_token %}
+                                            <div class="mb-3">
+                                                {{ rsvp_form.status|as_crispy_field }}
+                                            </div>
+                                            <button type="submit" class="btn btn-orange w-100">
+                                                <i class="fas fa-check"></i> Update your attendees
+                                            </button>
+                                        </form>
+                                        
+                                        <!-- Event Completion Button for Creator -->
+                                        {% if user == object.creator %}
+                                            <hr class="my-3">
+                                            <form method="post" action="{% url 'event-complete' object.pk %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-success btn-sm w-100" 
+                                                        onclick="return confirm('Are you sure you want to mark this event as completed? This action cannot be undone.')">
+                                                    <i class="fas fa-check-circle"></i> Mark Event as Completed
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% elif object.is_past and not object.is_completed %}
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted">
+                                            <i class="fas fa-history"></i>
+                                            This event has ended
+                                        </h6>
+                                        
+                                        <!-- Event Completion Button for Creator (if not already completed) -->
+                                        {% if user == object.creator and not object.is_completed %}
+                                            <hr class="my-3">
+                                            <form method="post" action="{% url 'event-complete' object.pk %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-success btn-sm w-100" 
+                                                        onclick="return confirm('Are you sure you want to mark this event as completed? This action cannot be undone.')">
+                                                    <i class="fas fa-check-circle"></i> Mark Event as Completed
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% elif object.is_completed %}
+                                <!-- Completed Event - No RSVP Updates Allowed -->
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-success mb-3">
+                                            <i class="fas fa-check-circle"></i>
+                                            Event marked as completed
+                                        </h6>
+                                        <small class="text-muted mb-3 d-block">This event was marked as completed by the organizer.</small>
+                                        
+                                        {% if user.is_authenticated %}
+                                            {% if user_rsvp %}
+                                                <div class="alert alert-info">
+                                                    <strong>Your attendance Status:</strong><br>
+                                                    <span class="badge {% if user_rsvp.status == 'going' %}badge-going{% else %}badge-not-going{% endif %}">
+                                                        {{ user_rsvp.get_status_display }}
+                                                    </span>
+                                                </div>
+                                                <div class="alert alert-danger attendance-locked">
+                                                    <i class="fas fa-lock"></i>
+                                                    <strong>Attendance Locked:</strong> No more changes allowed for completed events.
+                                                </div>
+                                            {% else %}
+                                                <div class="alert alert-danger attendance-locked">
+                                                    <i class="fas fa-lock"></i>
+                                                    <strong>Attendance Locked:</strong> No more attendance allowed for completed events.
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Attendee Progress -->
+                            {% if object.capacity %}
+                                <div class="card mt-3">
+                                    <div class="card-body">
+                                        <h6>Event Capacity</h6>
+                                        <div class="progress mb-2" style="height: 10px;">
+                                            <div class="progress-bar capacity-progress" data-width="{{ capacity_percentage|default:0 }}"></div>
+                                        </div>
+                                        <small class="text-muted">
+                                            {{ object.attendee_count }} / {{ object.capacity }} attendees
+                                        </small>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tabs Section -->
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="eventTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">
+                        <i class="fas fa-info-circle"></i> Details
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="attendees-tab" data-bs-toggle="tab" data-bs-target="#attendees" type="button" role="tab">
+                        <i class="fas fa-users"></i> Attendees ({{ attendees.count }})
+                    </button>
+                </li>
+
+            </ul>
+            
+            <div class="tab-content" id="eventTabsContent">
+                <!-- Details Tab -->
+                <div class="tab-pane fade show active" id="details" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>About This Event</h5>
+                            <div class="event-description">
+                                {{ object.description|linebreaks }}
+                            </div>
+                            
+                            {% if object.created_at %}
+                                <hr>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    Event created on {{ object.created_at|date:"F d, Y" }}
+                                </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Attendees Tab -->
+                <div class="tab-pane fade" id="attendees" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            {% if attendees %}
+                                <div class="row">
+                                    {% for rsvp in attendees %}
+                                        <div class="col-md-6 col-lg-4 mb-3">
+                                            <div class="attendee-card d-flex align-items-center">
+                                                <div class="attendee-avatar me-3">
+                                                    {% if rsvp.user.profile.avatar %}
+                                                        <img src="{{ rsvp.user.profile.avatar.url }}" alt="{{ rsvp.user.username }}" class="rounded-circle" width="50" height="50">
+                                                    {% else %}
+                                                        <div class="avatar-placeholder">
+                                                            <i class="fas fa-user"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="attendee-info">
+                                                    <h6 class="mb-0">{{ rsvp.user.first_name|default:rsvp.user.username }}</h6>
+                                                    <small class="text-muted">attended {{ rsvp.created_at|timesince }} ago</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No attendees yet</h5>
+                                    <p class="text-muted">Be the first to attend this event!</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.meta-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.meta-item i {
+    margin-right: 0.5rem;
+    width: 20px;
+}
+
+.attendee-card {
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.attendee-card:hover {
+    box-shadow: var(--shadow);
+}
+
+.avatar-placeholder, .avatar-placeholder-sm {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--orange-lightest);
+    color: var(--orange-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-placeholder-sm {
+    width: 40px;
+    height: 40px;
+}
+
+
+
+.nav-tabs .nav-link {
+    color: var(--gray-medium);
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: none;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: var(--orange-light);
+    color: var(--orange-primary);
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--orange-primary);
+    border-color: var(--orange-primary);
+    background: none;
+}
+
+.tab-content {
+    margin-top: 1rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set capacity progress bar width
+    const progressBar = document.querySelector('.capacity-progress');
+    if (progressBar) {
+        const width = progressBar.getAttribute('data-width');
+        progressBar.style.width = width + '%';
+    }
+
+    // Auto-activate tab from URL hash
+    function activateTabFromHash() {
+        const hash = window.location.hash;
+        if (!hash) return;
+        const trigger = document.querySelector(`[data-bs-target="${hash}"]`);
+        if (trigger && window.bootstrap && window.bootstrap.Tab) {
+            new bootstrap.Tab(trigger).show();
+        }
+    }
+
+    // Update hash when switching tabs so back/links work
+    const tabTriggers = document.querySelectorAll('#eventTabs [data-bs-toggle="tab"]');
+    tabTriggers.forEach((el) => {
+        el.addEventListener('shown.bs.tab', function (e) {
+            const target = e.target.getAttribute('data-bs-target');
+            if (target) {
+                history.replaceState(null, '', target);
+            }
+        });
+    });
+
+    activateTabFromHash();
+});
+</script>
+{% endblock content %}

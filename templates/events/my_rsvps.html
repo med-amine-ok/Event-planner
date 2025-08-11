@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="fas fa-check-circle text-orange"></i> My Upcoming events</h2>
+                    <p class="text-muted">Events you've responded to</p>
+                </div>
+                <a href="{% url 'events-home' %}" class="btn btn-orange">
+                    <i class="fas fa-plus"></i> Find More Events
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events -->
+    {% if upcoming_rsvps %}
+        <div class="row mb-5">
+            <div class="col-12">
+                <h4 class="mb-3">
+                    <i class="fas fa-calendar-check text-orange"></i> 
+                    Upcoming Events ({{ upcoming_rsvps.count }})
+                </h4>
+                
+                <div class="row">
+                    {% for rsvp in upcoming_rsvps %}
+                        <div class="col-lg-6 mb-4">
+                            <div class="card hover-lift">
+                                <div class="row g-0">
+                                    <div class="col-md-4">
+                                        {% if rsvp.event.image %}
+                                            <img src="{{ rsvp.event.image.url }}" class="img-fluid rounded-start h-100 object-cover" alt="{{ rsvp.event.title }}">
+                                        {% else %}
+                                            <div class="bg-orange-light d-flex align-items-center justify-content-center h-100 rounded-start">
+                                                <i class="fas fa-calendar-alt fa-2x text-orange"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 class="card-title mb-0">{{ rsvp.event.title }}</h6>
+                                                <span class="badge {% if rsvp.status == 'going' %}badge-going{% else %}badge-not-going{% endif %}">
+                                                    {% if rsvp.status == 'going' %}
+                                                        <i class="fas fa-check"></i> Going
+                                                    {% else %}
+                                                        <i class="fas fa-times"></i> Not Going
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="event-details mb-2">
+                                                <small class="text-muted d-block">
+                                                    <i class="fas fa-calendar"></i> {{ rsvp.event.date|date:"M d, Y" }}
+                                                </small>
+                                                <small class="text-muted d-block">
+                                                    <i class="fas fa-clock"></i> {{ rsvp.event.time|time:"g:i A" }}
+                                                </small>
+                                                <small class="text-muted d-block">
+                                                    <i class="fas fa-map-marker-alt"></i> {{ rsvp.event.location|truncatechars:25 }}
+                                                </small>
+                                            </div>
+                                            
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">
+                                                    You have been confirmed as attending this event {{ rsvp.created_at|timesince }} ago
+                                                </small>
+                                                <a href="{% url 'event-detail' rsvp.event.pk %}" class="btn btn-orange btn-sm">
+                                                    View Event
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Past Events -->
+    {% if past_rsvps %}
+        <div class="row">
+            <div class="col-12">
+                <h4 class="mb-3">
+                    <i class="fas fa-history text-muted"></i> 
+                    Past Events ({{ past_rsvps.count }})
+                </h4>
+                
+                <div class="row">
+                    {% for rsvp in past_rsvps %}
+                        <div class="col-lg-6 mb-4">
+                            <div class="card hover-lift">
+                                <div class="row g-0">
+                                    <div class="col-md-4">
+                                        {% if rsvp.event.image %}
+                                            <img src="{{ rsvp.event.image.url }}" class="img-fluid rounded-start h-100 object-cover grayscale" alt="{{ rsvp.event.title }}">
+                                        {% else %}
+                                            <div class="bg-gray-light d-flex align-items-center justify-content-center h-100 rounded-start">
+                                                <i class="fas fa-calendar-check fa-2x text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 class="card-title mb-0">{{ rsvp.event.title }}</h6>
+                                                <span class="badge bg-secondary">
+                                                    <i class="fas fa-check"></i> Completed
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="event-details mb-2">
+                                                <small class="text-muted d-block">
+                                                    <i class="fas fa-calendar"></i> {{ rsvp.event.date|date:"M d, Y" }}
+                                                </small>
+                                                <small class="text-muted d-block">
+                                                    <i class="fas fa-clock"></i> {{ rsvp.event.time|time:"g:i A" }}
+                                                </small>
+                                                <small class="text-muted d-block">
+                                                    <i class="fas fa-map-marker-alt"></i> {{ rsvp.event.location|truncatechars:25 }}
+                                                </small>
+                                            </div>
+                                            
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">
+                                                    {% if rsvp.status == 'going' %}
+                                                        Attended {{ rsvp.event.date|timesince }} ago
+                                                    {% else %}
+                                                        Didn't attend
+                                                    {% endif %}
+                                                </small>
+                                                <div class="btn-group">
+                                                    {% if rsvp.event.can_rate %}
+                                                        <button type="button" class="btn btn-warning btn-sm" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#ratingModal{{ rsvp.event.pk }}"
+                                                                data-event-id="{{ rsvp.event.pk }}"
+                                                                data-event-title="{{ rsvp.event.title }}">
+                                                            <i class="fas fa-star"></i> Rate Event
+                                                        </button>
+                                                    {% elif rsvp.event.user_rating %}
+                                                        <span class="badge bg-success">
+                                                            <i class="fas fa-check"></i> Rated
+                                                        </span>
+                                                    {% endif %}
+                                                    <a href="{% url 'event-detail' rsvp.event.pk %}" class="btn btn-outline-secondary btn-sm">
+                                                        View
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- No RSVPs -->
+    {% if not upcoming_rsvps and not past_rsvps %}
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">No RSVPs yet</h4>
+            <p class="text-muted mb-4">
+                You haven't RSVP'd to any events. Start exploring and find events that interest you!
+            </p>
+            <a href="{% url 'events-home' %}" class="btn btn-orange">
+                <i class="fas fa-search"></i> Discover Events
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Rating Modals -->
+{% for rsvp in past_rsvps %}
+    {% if rsvp.event.can_rate %}
+        <div class="modal fade" id="ratingModal{{ rsvp.event.pk }}" tabindex="-1" aria-labelledby="ratingModalLabel{{ rsvp.event.pk }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ratingModalLabel{{ rsvp.event.pk }}">
+                            <i class="fas fa-star text-warning"></i> Rate Event
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{% url 'event-rate' rsvp.event.pk %}" class="rating-form">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <h6 class="mb-3">{{ rsvp.event.title }}</h6>
+                            
+                            <div class="mb-3">
+                                <label for="{{ rating_form.stars.id_for_label }}" class="form-label">Rating *</label>
+                                {{ rating_form.stars }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ rating_form.feedback.id_for_label }}" class="form-label">Feedback (Optional)</label>
+                                {{ rating_form.feedback }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-star"></i> Submit Rating
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}
+
+<style>
+.object-cover {
+    object-fit: cover;
+}
+
+.grayscale {
+    filter: grayscale(50%);
+}
+
+.event-details small {
+    margin-bottom: 0.25rem;
+}
+
+.event-details i {
+    width: 12px;
+    margin-right: 0.5rem;
+    color: var(--orange-primary);
+}
+
+.card-body {
+    position: relative;
+}
+
+.badge-going {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.badge-not-going {
+    background: linear-gradient(135deg, #dc3545, #fd7e14);
+}
+
+@media (max-width: 768px) {
+    .col-md-4, .col-md-8 {
+        min-height: auto;
+    }
+    
+    .card .row.g-0 {
+        flex-direction: column;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock content %}

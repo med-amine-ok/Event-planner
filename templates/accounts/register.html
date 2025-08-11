@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center min-vh-100 align-items-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-custom">
+                <div class="card-body p-5">
+                    <!-- Logo and Title -->
+                    <div class="text-center mb-4">
+                        <div class="logo-container mb-3">
+                            <i class="fas fa-calendar-alt fa-3x text-orange"></i>
+                        </div>
+                        <h3 class="fw-bold text-dark">Join Event Planner</h3>
+                        <p class="text-muted">Create your account and start organizing events</p>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.username.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user text-orange me-2"></i>Username *
+                                </label>
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.username.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    <small>150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    <i class="fas fa-envelope text-orange me-2"></i>Email Address *
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.email.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    <small>We'll send you event reminders and updates.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.password1.id_for_label }}" class="form-label">
+                                    <i class="fas fa-lock text-orange me-2"></i>Password *
+                                </label>
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.password1.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <div class="password-strength-meter">
+                                    <div class="password-strength-bar"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label for="{{ form.password2.id_for_label }}" class="form-label">
+                                    <i class="fas fa-lock text-orange me-2"></i>Confirm Password *
+                                </label>
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.password2.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <div class="password-match-indicator"></div>
+                            </div>
+                        </div>
+
+                        <!-- Password Requirements -->
+                        <div class="password-requirements mb-4">
+                            <small class="text-muted">Your password must:</small>
+                            <ul class="requirements-list">
+                                <li id="length-req">Be at least 8 characters long</li>
+                                <li id="number-req">Contain at least one number</li>
+                                <li id="letter-req">Contain at least one letter</li>
+                                <li id="special-req">Not be too common</li>
+                            </ul>
+                        </div>
+
+                        <!-- Non-field errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors.0 }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Terms and Privacy -->
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" class="text-orange">Terms of Service</a> and 
+                                <a href="#" class="text-orange">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-orange btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="text-muted mb-0">
+                                Already have an account? 
+                                <a href="{% url 'login' %}" class="text-orange text-decoration-none fw-bold">
+                                    Sign In
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Benefits Section -->
+            <div class="benefits-section mt-4">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="fas fa-calendar-plus fa-2x text-orange"></i>
+                            </div>
+                            <h6 class="mt-2">Create Events</h6>
+                            <small class="text-muted">Organize and manage your own events with ease</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="fas fa-bell fa-2x text-orange"></i>
+                            </div>
+                            <h6 class="mt-2">Get Reminders</h6>
+                            <small class="text-muted">Never miss an event with email notifications</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="fas fa-users fa-2x text-orange"></i>
+                            </div>
+                            <h6 class="mt-2">Join Community</h6>
+                            <small class="text-muted">Connect with others and discover amazing events</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.password-strength-meter {
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.password-strength-bar {
+    height: 100%;
+    width: 0%;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.password-match-indicator {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.requirements-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+}
+
+.requirements-list li {
+    padding: 0.25rem 0;
+    font-size: 0.875rem;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.requirements-list li::before {
+    content: '✗';
+    position: absolute;
+    left: 0;
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.requirements-list li.valid::before {
+    content: '✓';
+    color: #28a745;
+}
+
+.benefit-item {
+    padding: 1.5rem 1rem;
+    transition: var(--transition);
+}
+
+.benefit-item:hover {
+    transform: translateY(-5px);
+}
+
+.benefit-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 127, 80, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: var(--transition);
+}
+
+.benefit-item:hover .benefit-icon {
+    background: var(--orange-primary);
+    color: white;
+}
+
+.benefit-item:hover .benefit-icon i {
+    color: white;
+}
+
+/* Form styling */
+.form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--orange-primary);
+    box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: var(--orange-primary);
+    border-color: var(--orange-primary);
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.25);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('.needs-validation');
+    const inputs = form.querySelectorAll('.form-control');
+    const password1 = document.querySelector('#{{ form.password1.id_for_label }}');
+    const password2 = document.querySelector('#{{ form.password2.id_for_label }}');
+    const strengthBar = document.querySelector('.password-strength-bar');
+    const matchIndicator = document.querySelector('.password-match-indicator');
+    
+    // Add form-control class to all form inputs
+    inputs.forEach(input => {
+        input.classList.add('form-control');
+    });
+    
+    // Password strength checker
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        let color = '#dc3545';
+        let width = '0%';
+        
+        if (password.length >= 8) {
+            strength += 25;
+            document.getElementById('length-req').classList.add('valid');
+        } else {
+            document.getElementById('length-req').classList.remove('valid');
+        }
+        
+        if (/\d/.test(password)) {
+            strength += 25;
+            document.getElementById('number-req').classList.add('valid');
+        } else {
+            document.getElementById('number-req').classList.remove('valid');
+        }
+        
+        if (/[a-zA-Z]/.test(password)) {
+            strength += 25;
+            document.getElementById('letter-req').classList.add('valid');
+        } else {
+            document.getElementById('letter-req').classList.remove('valid');
+        }
+        
+        if (password.length >= 8 && /[a-zA-Z]/.test(password) && /\d/.test(password)) {
+            strength += 25;
+            document.getElementById('special-req').classList.add('valid');
+        } else {
+            document.getElementById('special-req').classList.remove('valid');
+        }
+        
+        if (strength >= 75) {
+            color = '#28a745';
+        } else if (strength >= 50) {
+            color = '#ffc107';
+        } else if (strength >= 25) {
+            color = '#fd7e14';
+        }
+        
+        width = strength + '%';
+        
+        strengthBar.style.width = width;
+        strengthBar.style.backgroundColor = color;
+    }
+    
+    // Password match checker
+    function checkPasswordMatch() {
+        if (password2.value) {
+            if (password1.value === password2.value) {
+                matchIndicator.innerHTML = '<small class="text-success"><i class="fas fa-check"></i> Passwords match</small>';
+                password2.classList.remove('is-invalid');
+                password2.classList.add('is-valid');
+            } else {
+                matchIndicator.innerHTML = '<small class="text-danger"><i class="fas fa-times"></i> Passwords do not match</small>';
+                password2.classList.remove('is-valid');
+                password2.classList.add('is-invalid');
+            }
+        } else {
+            matchIndicator.innerHTML = '';
+            password2.classList.remove('is-valid', 'is-invalid');
+        }
+    }
+    
+    // Event listeners
+    if (password1) {
+        password1.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+            if (password2.value) {
+                checkPasswordMatch();
+            }
+        });
+    }
+    
+    if (password2) {
+        password2.addEventListener('input', checkPasswordMatch);
+    }
+    
+    // Form submission validation
+    form.addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        // Check required fields
+        inputs.forEach(input => {
+            if (input.hasAttribute('required') && !input.value.trim()) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            }
+        });
+        
+        // Check password match
+        if (password1.value !== password2.value) {
+            isValid = false;
+        }
+        
+        // Check terms agreement
+        const termsCheckbox = document.getElementById('terms');
+        if (!termsCheckbox.checked) {
+            isValid = false;
+            termsCheckbox.focus();
+        }
+        
+        if (!isValid) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    });
+});
+</script>
+{% endblock content %}

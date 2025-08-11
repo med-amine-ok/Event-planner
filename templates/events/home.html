@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="hero-section bg-white rounded-lg shadow-custom p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="display-4 fw-bold mb-3">Discover Amazing Events</h1>
+                        <p class="lead mb-4">Join exciting events, meet new people, and create unforgettable memories. Browse all events created by our community.</p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'event-create' %}" class="btn btn-orange">
+                                    <i class="fas fa-plus"></i> Create New Event
+                                </a>
+                                <a href="#calendar-section" class="btn btn-outline-orange">
+                                    <i class="fas fa-calendar"></i> View Calendar
+                                </a>
+                            {% else %}
+                                <a href="{% url 'register' %}" class="btn btn-orange">
+                                    <i class="fas fa-user-plus"></i> Join Now
+                                </a>
+                                <a href="{% url 'login' %}" class="btn btn-outline-orange">
+                                    <i class="fas fa-sign-in-alt"></i> Login
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number">{{ total_events }}</div>
+                                <div class="stat-label">Total Events</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="search-section">
+                <h5 class="mb-3"><i class="fas fa-search text-orange"></i> Find Events</h5>
+                <form method="get" class="search-form">
+                    <div class="row g-3">
+                        <div class="col-lg-4 col-md-6 col-12">
+                            {{ search_form.search }}
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            {{ search_form.location }}
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            {{ search_form.date_from }}
+                        </div>
+                        <div class="col-lg-2 col-md-6 col-12 d-grid">
+                            <button type="submit" class="btn btn-orange w-100 h-100">
+                                <i class="fas fa-search"> Search</i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4><i class="fas fa-calendar-alt text-orange"></i> All Events</h4>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'event-create' %}" class="btn btn-orange btn-sm">
+                        <i class="fas fa-plus"></i> Add Event
+                    </a>
+                {% endif %}
+            </div>
+            {% if user.is_authenticated %}
+            <div class="row mb-4" id="calendar-section">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-calendar text-orange"></i> Events Calendar</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="calendar" data-events-url="{% url 'calendar-events-api' %}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if events %}
+                <div class="row">
+                    {% for event in events %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card event-card hover-lift">
+                                <div class="position-relative">
+                                    {% if event.image %}
+                                        <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">
+                                    {% else %}
+                                        <div class="card-img-top bg-orange-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                            <i class="fas fa-calendar-alt fa-3x text-orange"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div class="event-date-badge">
+                                        <div>{{ event.date|date:"M" }}</div>
+                                        <div style="font-size: 1.2rem;">{{ event.date|date:"d" }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-body event-info">
+                                    <h5 class="event-title">{{ event.title }}</h5>
+                                    
+                                    <div class="event-details mb-3">
+                                        <div class="mb-1">
+                                            <i class="fas fa-clock"></i>
+                                            {{ event.time|time:"g:i A" }}
+                                        </div>
+                                        <div class="mb-1">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            {{ event.location|truncatechars:30 }}
+                                        </div>
+                                        <div class="mb-1">
+                                            <i class="fas fa-user"></i>
+                                            by {{ event.creator.first_name|default:event.creator.username }}
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="card-text text-muted">
+                                        {{ event.description|truncatechars:100 }}
+                                    </p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <span class="attendee-count">
+                                            <i class="fas fa-users"></i>
+                                            {{ event.attendee_count }} attending
+                                        </span>
+                                        
+                                        <div class="btn-group">
+                                            <a href="{% url 'event-detail' event.pk %}" class="btn btn-orange btn-sm">
+                                                View Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if is_paginated %}
+                    <nav aria-label="Events pagination" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{{ request.GET.urlencode|slice:'6:' }}">First</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ request.GET.urlencode|slice:'6:' }}">Previous</a>
+                                </li>
+                            {% endif %}
+                            
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                                </span>
+                            </li>
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{{ request.GET.urlencode|slice:'6:' }}">Next</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{{ request.GET.urlencode|slice:'6:' }}">Last</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No events found</h4>
+                    <p class="text-muted mb-4">
+                        {% if request.GET.search or request.GET.location or request.GET.date_from or request.GET.date_to %}
+                            Try adjusting your search criteria or 
+                            <a href="{% url 'events-home' %}" class="text-orange">view all events</a>.
+                        {% else %}
+                            Be the first to create an amazing event!
+                        {% endif %}
+                    </p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'event-create' %}" class="btn btn-orange">
+                            <i class="fas fa-plus"></i> Create First Event
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    
+
+</div>
+
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #fff 0%, var(--orange-lightest) 100%);
+}
+
+.stats-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--orange-primary);
+    font-family: 'Poppins', sans-serif;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--gray-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        margin-top: 2rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+}
+</style>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize calendar if present
+        initializeCalendar();
+    });
+</script>
+{% endblock extra_js %}
