@@ -19,7 +19,7 @@ class Event(models.Model):
     auto_complete_hours = models.PositiveIntegerField(default=0, help_text="Hours after event start to auto-complete")
     capacity = models.PositiveIntegerField(blank=True, null=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_events')
-    image = models.ImageField(default='event_pics/event_default.png', upload_to='event_pics')
+    image = models.ImageField(default='media/event_pics/event_default.png', upload_to='event_pics')
     end_datetime = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
