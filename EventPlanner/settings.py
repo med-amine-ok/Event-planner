@@ -136,8 +136,10 @@ STATICFILES_DIRS = [
 
 # Media files
 MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# Custom storage for media files (useful for production)
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -171,4 +173,3 @@ CRONJOBS = [
 # Honor X-Forwarded-Proto/Host headers when behind a proxy (e.g., Vercel)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
-
