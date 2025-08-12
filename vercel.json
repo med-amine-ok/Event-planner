@@ -3,7 +3,8 @@
     {
       "src": "EventPlanner/wsgi.py",
       "use": "@vercel/python"
-    }
+    },
+    { "src": "static/**/*", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/static/(.*)", "dest": "/static/$1" },
