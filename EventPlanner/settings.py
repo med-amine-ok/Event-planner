@@ -135,19 +135,10 @@ STATICFILES_DIRS = [
 ]
 
 # Media files
-# Default to project media dir locally. Allow override via env for platforms with
-# read-only deploy FS (e.g., Vercel). On Vercel, set MEDIA_ROOT to /tmp/media.
+MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = Path(config('MEDIA_ROOT', default=str(BASE_DIR / 'media')))
 
-# Ensure the media directory exists at runtime if writable
-try:
-    os.makedirs(MEDIA_ROOT, exist_ok=True)
-except Exception:
-    # Ignore if the path is not creatable (will fail only on read-only FS at startup)
-    pass
-
-# Always use local filesystem storage
+# Custom storage for media files (useful for production)
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Default primary key field type
