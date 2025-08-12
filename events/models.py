@@ -19,7 +19,7 @@ class Event(models.Model):
     auto_complete_hours = models.PositiveIntegerField(default=0, help_text="Hours after event start to auto-complete")
     capacity = models.PositiveIntegerField(blank=True, null=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_events')
-    image = models.ImageField(default='event_default.jpg', upload_to='event_pics')
+    image = models.ImageField(default='event_pics/event_default.png', upload_to='event_pics')
     end_datetime = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -79,14 +79,18 @@ class Event(models.Model):
             pass
 
         super().save(*args, **kwargs)
-        
-        # Resize image
-        if Image and self.image and os.path.isfile(self.image.path):
-            img = Image.open(self.image.path)
-            if img.height > 800 or img.width > 800:
-                output_size = (800, 800)
-                img.thumbnail(output_size)
-                img.save(self.image.path)
+
+        # Resize image only when stored on local filesystem (e.g., dev or non-cloud storage)
+        image_path = getattr(self.image, 'path', None)
+        if Image and self.image and image_path and os.path.isfile(image_path):
+            try:
+                img = Image.open(image_path)
+                if img.height > 800 or img.width > 800:
+                    output_size = (800, 800)
+                    img.thumbnail(output_size)
+                    img.save(image_path)
+            except Exception:
+                pass
 
 
 class RSVP(models.Model):
