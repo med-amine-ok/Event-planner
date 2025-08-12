@@ -10,12 +10,14 @@
   ],
   "routes": [
     { "src": "/static/(.*)", "dest": "static/$1" },
-    { "src": "/media/(.*)", "dest": "media/$1" },
+    { "src": "/media/(.*)", "dest": "EventPlanner/wsgi.py" },
     { "src": "/(.*)", "dest": "EventPlanner/wsgi.py" }
   ],
   "functions": {
     "EventPlanner/wsgi.py": {
       "maxDuration": 30
     }
-  }
+  },
+  "outputDirectory": "EventPlanner",
+  "public": true
 }
