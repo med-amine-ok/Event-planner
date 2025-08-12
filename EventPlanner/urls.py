@@ -18,11 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import MediaServeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('events.urls')),
     path('accounts/', include('accounts.urls')),
+    path('media/<path:path>', MediaServeView.as_view(), name='media'),
 ]
 
 # Serve media files in both development and production
