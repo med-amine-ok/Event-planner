@@ -17,7 +17,5 @@
     "EventPlanner/wsgi.py": {
       "maxDuration": 30
     }
-  },
-  "outputDirectory": "EventPlanner",
-  "public": true
+  }
 }
