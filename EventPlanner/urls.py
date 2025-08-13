@@ -19,15 +19,13 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import MediaServeView
-from db_storage.views import DbMediaServeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('events.urls')),
     path('accounts/', include('accounts.urls')),
     path('media/<path:path>', MediaServeView.as_view(), name='media'),
-    path('db-media/<path:path>', DbMediaServeView.as_view(), name='db_media'),
 ]
 
-# Keep static serving helper only for local static files, not db media
-urlpatterns += static('/static/', document_root=settings.STATICFILES_DIRS[0])
+# Serve media files in both development and production
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
