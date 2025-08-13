@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
-from django.core.files.storage import FileSystemStorage
 from PIL import Image
 import os
 from datetime import datetime, timedelta
@@ -81,18 +80,17 @@ class Event(models.Model):
 
         super().save(*args, **kwargs)
 
-        # Resize image only when stored on local filesystem (e.g., dev)
-        try:
-            if self.image and isinstance(self.image.storage, FileSystemStorage):
-                image_path = self.image.path
-                if os.path.isfile(image_path):
-                    img = Image.open(image_path)
-                    if img.height > 800 or img.width > 800:
-                        output_size = (800, 800)
-                        img.thumbnail(output_size)
-                        img.save(image_path)
-        except Exception:
-            pass
+        # Resize image only when stored on local filesystem (e.g., dev or non-cloud storage)
+        image_path = getattr(self.image, 'path', None)
+        if Image and self.image and image_path and os.path.isfile(image_path):
+            try:
+                img = Image.open(image_path)
+                if img.height > 800 or img.width > 800:
+                    output_size = (800, 800)
+                    img.thumbnail(output_size)
+                    img.save(image_path)
+            except Exception:
+                pass
 
 
 class RSVP(models.Model):
