@@ -650,3 +650,92 @@ body.sidebar-open {
 .sidebar::-webkit-scrollbar-thumb:hover {
     background: rgba(255,255,255,0.5);
 }
+
+/* Pagination - use orange theme instead of Bootstrap blue */
+.pagination {
+	--bs-pagination-color: var(--orange-primary);
+	--bs-pagination-hover-color: #ffffff;
+	--bs-pagination-hover-bg: var(--orange-primary);
+	--bs-pagination-hover-border-color: var(--orange-primary);
+	--bs-pagination-focus-color: var(--orange-primary);
+	--bs-pagination-focus-box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.25);
+	--bs-pagination-active-color: #ffffff;
+	--bs-pagination-active-bg: var(--orange-primary);
+	--bs-pagination-active-border-color: var(--orange-primary);
+	--bs-pagination-border-color: var(--orange-primary);
+	--bs-pagination-disabled-color: var(--gray-medium);
+}
+
+.pagination .page-link {
+	color: var(--orange-primary) !important;
+	border-color: var(--orange-primary) !important;
+}
+
+.pagination .page-link:hover {
+	color: var(--white) !important;
+	background-color: var(--orange-primary) !important;
+	border-color: var(--orange-primary) !important;
+}
+
+.pagination .page-link:focus {
+	box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.25) !important;
+}
+
+.pagination .page-item.active .page-link {
+	background-color: var(--orange-primary) !important;
+	border-color: var(--orange-primary) !important;
+	color: var(--white) !important;
+}
+
+.pagination .page-item.disabled .page-link {
+	color: var(--gray-medium) !important;
+	border-color: #dee2e6 !important;
+}
+
+.pagination .page-link:visited {
+	color: var(--orange-primary) !important;
+}
+
+/* Extra-specific overrides for Events pagination block */
+nav[aria-label="Events pagination"] .page-link {
+	color: var(--orange-primary) !important;
+	border-color: var(--orange-primary) !important;
+	background-color: #ffffff !important;
+}
+
+nav[aria-label="Events pagination"] .page-item.active .page-link,
+nav[aria-label="Events pagination"] .page-link.active {
+	color: #ffffff !important;
+	background-color: var(--orange-primary) !important;
+	border-color: var(--orange-primary) !important;
+}
+
+nav[aria-label="Events pagination"] .page-item .page-link:hover {
+	color: #ffffff !important;
+	background-color: var(--orange-primary) !important;
+	border-color: var(--orange-primary) !important;
+}
+
+/* Dedicated orange pagination class */
+.pagination-orange .page-link {
+	color: var(--orange-primary) !important;
+	border-color: var(--orange-primary) !important;
+	background-color: #ffffff !important;
+}
+
+.pagination-orange .page-item.active .page-link,
+.pagination-orange .page-link.active {
+	color: #ffffff !important;
+	background-color: var(--orange-primary) !important;
+	border-color: var(--orange-primary) !important;
+}
+
+.pagination-orange .page-link:hover {
+	color: #ffffff !important;
+	background-color: var(--orange-primary) !important;
+	border-color: var(--orange-primary) !important;
+}
+
+.pagination-orange .page-link:focus {
+	box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.25) !important;
+}
