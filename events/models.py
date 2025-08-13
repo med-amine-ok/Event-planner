@@ -1,10 +1,36 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
 from django.utils import timezone
 from PIL import Image
 import os
 from datetime import datetime, timedelta
+
+
+def _resolve_media_storage():
+    media_root = os.environ.get('MEDIA_ROOT') or getattr(settings, 'MEDIA_ROOT', None)
+    if media_root:
+        try:
+            os.makedirs(media_root, exist_ok=True)
+            test_path = os.path.join(media_root, '.write-test')
+            with open(test_path, 'wb') as f:
+                f.write(b'1')
+            os.remove(test_path)
+        except Exception:
+            media_root = '/tmp/media'
+    else:
+        media_root = '/tmp/media'
+    try:
+        os.makedirs(media_root, exist_ok=True)
+    except Exception:
+        pass
+    base_url = getattr(settings, 'MEDIA_URL', '/media/')
+    return FileSystemStorage(location=media_root, base_url=base_url)
+
+
+_event_media_storage = _resolve_media_storage()
 
 
 class Event(models.Model):
@@ -19,7 +45,7 @@ class Event(models.Model):
     auto_complete_hours = models.PositiveIntegerField(default=0, help_text="Hours after event start to auto-complete")
     capacity = models.PositiveIntegerField(blank=True, null=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_events')
-    image = models.ImageField(default='event_pics/event_default.png', upload_to='event_pics')
+    image = models.ImageField(default='event_pics/event_default.png', upload_to='event_pics', storage=_event_media_storage)
     end_datetime = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
