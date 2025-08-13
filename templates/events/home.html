@@ -155,13 +155,13 @@
                 
                 <!-- Pagination -->
                 {% if is_paginated %}
-                    <nav aria-label="Events pagination" class="mt-4">
-                        <ul class="pagination justify-content-center">
+                    <nav aria-label="Events pagination" class="mt-4 style-color-orange">
+                        <ul class="pagination justify-content-center pagination-orange">
                             {% if page_obj.has_previous %}
-                                <li class="page-item">
+                                <li class="page-item pagination-orange style-color-orange">
                                     <a class="page-link" href="?page=1{{ request.GET.urlencode|slice:'6:' }}">First</a>
                                 </li>
-                                <li class="page-item">
+                                <li class="page-item col-1">
                                     <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ request.GET.urlencode|slice:'6:' }}">Previous</a>
                                 </li>
                             {% endif %}
@@ -236,6 +236,26 @@
     color: var(--gray-medium);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+/* Force orange pagination on home page */
+nav[aria-label="Events pagination"] .pagination.pagination-orange .page-link {
+    color: var(--orange-primary) !important;
+    border-color: var(--orange-primary) !important;
+    background-color: #ffffff !important;
+}
+
+nav[aria-label="Events pagination"] .pagination.pagination-orange .page-item.active .page-link,
+nav[aria-label="Events pagination"] .pagination.pagination-orange .page-link.active {
+    color: #ffffff !important;
+    background-color: var(--orange-primary) !important;
+    border-color: var(--orange-primary) !important;
+}
+
+nav[aria-label="Events pagination"] .pagination.pagination-orange .page-link:hover {
+    color: #ffffff !important;
+    background-color: var(--orange-primary) !important;
+    border-color: var(--orange-primary) !important;
 }
 
 @media (max-width: 768px) {
