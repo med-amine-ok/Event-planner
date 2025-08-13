@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'django_crontab',
-    'db_storage.apps.DbStorageConfig',
     'events.apps.EventsConfig',
     'accounts.apps.AccountsConfig',
 ]
@@ -136,12 +135,11 @@ STATICFILES_DIRS = [
 ]
 
 # Media files
-# Use DB-backed storage to avoid filesystem writes on read-only hosts
 MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = '/db-media/'
+MEDIA_URL = '/media/'
 
-# Custom storage for media files (database storage)
-DEFAULT_FILE_STORAGE = 'db_storage.storage.DatabaseStorage'
+# Custom storage for media files (useful for production)
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
